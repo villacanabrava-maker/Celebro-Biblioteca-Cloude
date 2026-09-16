@@ -205,7 +205,7 @@ export function AddDocumentForm() {
           onChange={(e) => setText(e.target.value)}
           placeholder="Escreva ou cole o conteúdo aqui..."
           rows={10}
-          className="w-full rounded-lg border border-input bg-card p-3 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="w-full rounded-xl border border-input bg-muted/60 p-3.5 text-sm placeholder:text-muted-foreground transition-all duration-200 focus-visible:border-ring focus-visible:bg-card focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring/15"
         />
       )}
 

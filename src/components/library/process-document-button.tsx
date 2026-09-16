@@ -44,7 +44,7 @@ export function ProcessDocumentButton({
     <div className="flex flex-col items-start gap-2">
       <Button
         size="sm"
-        variant={status === "processado" ? "outline" : "default"}
+        variant={status === "processado" ? "outline" : "ai"}
         onClick={handleClick}
         disabled={isProcessing}
       >

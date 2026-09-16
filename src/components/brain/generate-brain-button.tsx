@@ -26,7 +26,7 @@ export function GenerateBrainButton({ hasInsights }: { hasInsights: boolean }) {
 
   return (
     <div className="flex flex-col items-center gap-2">
-      <Button onClick={handleClick} disabled={loading} size="lg">
+      <Button onClick={handleClick} disabled={loading} size="lg" variant="ai">
         {loading ? (
           <Loader2 className="size-4 animate-spin" />
         ) : hasInsights ? (

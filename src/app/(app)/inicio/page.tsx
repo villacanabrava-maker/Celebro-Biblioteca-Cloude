@@ -5,12 +5,13 @@ import { TopBar } from "@/components/layout/top-bar";
 import { Card, CardContent } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { getInitials } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 const quickActions = [
-  { href: "/biblioteca/adicionar", label: "Adicionar arquivo", icon: FilePlus2 },
-  { href: "/reflexao", label: "Criar nova reflexão", icon: Sparkles },
-  { href: "/cerebro", label: "Consultar meu cérebro", icon: Brain },
-  { href: "/reflexoes", label: "Ver minhas reflexões", icon: NotebookText },
+  { href: "/biblioteca/adicionar", label: "Adicionar arquivo", icon: FilePlus2, ai: false },
+  { href: "/reflexao", label: "Criar nova reflexão", icon: Sparkles, ai: true },
+  { href: "/cerebro", label: "Consultar meu cérebro", icon: Brain, ai: true },
+  { href: "/reflexoes", label: "Ver minhas reflexões", icon: NotebookText, ai: false },
 ];
 
 export default async function InicioPage() {
@@ -38,19 +39,31 @@ export default async function InicioPage() {
       <TopBar showLogo initials={initials} />
 
       <div className="flex flex-col gap-5 px-4 pt-5">
-        <section className="rounded-xl bg-gradient-to-br from-navy to-navy-muted p-5 text-white">
-          <p className="text-xl font-semibold">Olá, {nome}!</p>
-          <p className="mt-1 text-sm text-white/70">Que bom te ver por aqui.</p>
-          <p className="mt-4 text-sm italic text-white/60">
-            &ldquo;Toda grande reflexão começa com uma pergunta.&rdquo;
-          </p>
+        <section
+          className="relative overflow-hidden rounded-3xl border border-navy-border bg-navy p-5 text-white shadow-[var(--shadow-lg)]"
+        >
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(55% 60% at 100% 0%, var(--navy-glow), transparent), radial-gradient(45% 45% at 0% 100%, rgba(58,169,247,0.18), transparent)",
+            }}
+            aria-hidden
+          />
+          <div className="relative">
+            <p className="text-xl font-semibold">Olá, {nome}!</p>
+            <p className="mt-1 text-sm text-white/65">Que bom te ver por aqui.</p>
+            <p className="mt-4 text-sm italic text-white/55">
+              &ldquo;Toda grande reflexão começa com uma pergunta.&rdquo;
+            </p>
+          </div>
         </section>
 
         <section className="flex flex-col gap-3">
           <Link href="/biblioteca">
-            <Card className="transition-shadow hover:shadow-md">
+            <Card className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-lg)]">
               <CardContent className="flex items-center gap-4 p-4">
-                <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-accent text-accent-foreground">
                   <Library className="size-5" />
                 </span>
                 <div className="flex-1">
@@ -65,9 +78,9 @@ export default async function InicioPage() {
           </Link>
 
           <Link href="/cerebro">
-            <Card className="transition-shadow hover:shadow-md">
+            <Card className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-lg)]">
               <CardContent className="flex items-center gap-4 p-4">
-                <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[image:var(--gradient-ai)] text-white shadow-[var(--shadow-glow-ai)]">
                   <Brain className="size-5" />
                 </span>
                 <div className="flex-1">
@@ -84,9 +97,9 @@ export default async function InicioPage() {
           </Link>
 
           <Link href="/reflexoes">
-            <Card className="transition-shadow hover:shadow-md">
+            <Card className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-lg)]">
               <CardContent className="flex items-center gap-4 p-4">
-                <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-accent text-accent-foreground">
                   <NotebookText className="size-5" />
                 </span>
                 <div className="flex-1">
@@ -106,11 +119,18 @@ export default async function InicioPage() {
         <section>
           <p className="mb-3 text-sm font-semibold text-foreground">Ações rápidas</p>
           <div className="grid grid-cols-2 gap-3">
-            {quickActions.map(({ href, label, icon: Icon }) => (
+            {quickActions.map(({ href, label, icon: Icon, ai }) => (
               <Link key={href} href={href}>
-                <Card className="h-full transition-shadow hover:shadow-md">
+                <Card className="h-full transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-lg)]">
                   <CardContent className="flex flex-col items-start gap-2.5 p-4">
-                    <span className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <span
+                      className={cn(
+                        "flex size-9 items-center justify-center rounded-xl",
+                        ai
+                          ? "bg-[image:var(--gradient-ai)] text-white shadow-[var(--shadow-glow-ai)]"
+                          : "bg-primary/10 text-primary"
+                      )}
+                    >
                       <Icon className="size-4.5" />
                     </span>
                     <p className="text-sm font-medium leading-tight">{label}</p>

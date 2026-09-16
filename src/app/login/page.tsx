@@ -48,14 +48,22 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-full flex-col bg-navy">
-      <div className="flex flex-1 flex-col justify-center px-6 py-10">
+    <div className="relative flex min-h-full flex-col overflow-hidden bg-navy">
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(60% 40% at 15% 0%, var(--navy-glow), transparent), radial-gradient(50% 35% at 100% 20%, rgba(58,169,247,0.22), transparent)",
+        }}
+        aria-hidden
+      />
+      <div className="relative flex flex-1 flex-col justify-center px-6 py-10">
         <div className="mx-auto w-full max-w-sm">
-          <div className="mb-8 flex justify-center">
-            <Logo withTagline className="flex-col items-center text-center" />
+          <div className="mb-9 flex justify-center">
+            <Logo withTagline size="lg" className="flex-col items-center text-center" />
           </div>
 
-          <div className="rounded-2xl bg-card p-6 shadow-xl">
+          <div className="rounded-3xl bg-card p-6 shadow-[var(--shadow-lg)]">
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="email">E-mail</Label>

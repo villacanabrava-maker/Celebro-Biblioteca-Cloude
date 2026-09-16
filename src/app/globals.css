@@ -1,34 +1,45 @@
 @import "tailwindcss";
 
 :root {
-  --radius: 0.75rem;
+  --radius: 1rem;
 
   /* Superfícies */
-  --background: #f7f9fc;
-  --foreground: #101828;
+  --background: #f6f7fb;
+  --foreground: #0f1524;
   --card: #ffffff;
-  --card-foreground: #101828;
+  --card-foreground: #0f1524;
   --popover: #ffffff;
-  --popover-foreground: #101828;
+  --popover-foreground: #0f1524;
 
-  /* Marca: azul-marinho (cabeçalho, navegação, rodapé) */
-  --navy: #131e36;
-  --navy-foreground: #f5f7fb;
-  --navy-muted: #24314f;
+  /* Marca: azul-marinho profundo (cabeçalho, navegação, rodapé) */
+  --navy: #0a0f22;
+  --navy-2: #10182f;
+  --navy-3: #171f3d;
+  --navy-foreground: #f7f8fc;
+  --navy-muted: #171f3d;
+  --navy-border: rgba(255, 255, 255, 0.08);
+  --navy-glow: rgba(90, 110, 255, 0.35);
 
   /* Marca: azul de ação (botões primários, links, estados ativos) */
-  --primary: #2f5fe0;
+  --primary: #3861f6;
   --primary-foreground: #ffffff;
-  --primary-hover: #2650c2;
+  --primary-hover: #2c4fdb;
+
+  /* Gradiente de IA — reservado para tudo que é gerado/analisado por IA
+     (botões "Gerar com IA", badges de Meu Cérebro, destaques de reflexão) */
+  --ai-from: #7c6cf7;
+  --ai-via: #5a6ef8;
+  --ai-to: #3aa9f7;
+  --gradient-ai: linear-gradient(135deg, var(--ai-from), var(--ai-via) 55%, var(--ai-to));
 
   --secondary: #eef1f8;
   --secondary-foreground: #1f2a44;
 
-  --muted: #f1f4f9;
-  --muted-foreground: #64748b;
+  --muted: #f0f2f8;
+  --muted-foreground: #676f88;
 
-  --accent: #eaf0fe;
-  --accent-foreground: #2f5fe0;
+  --accent: #eef0fe;
+  --accent-foreground: #3861f6;
 
   --success: #16a34a;
   --success-foreground: #ffffff;
@@ -41,20 +52,27 @@
   --destructive-foreground: #ffffff;
   --destructive-muted: #fdecec;
 
-  --border: #e5e9f0;
-  --input: #e5e9f0;
-  --ring: #2f5fe0;
+  --border: #e7e9f2;
+  --input: #e2e5f0;
+  --ring: #3861f6;
+
+  /* Sombras em camadas — elevação suave e "premium" */
+  --shadow-xs: 0 1px 2px rgba(15, 21, 36, 0.04);
+  --shadow-sm: 0 1px 2px rgba(15, 21, 36, 0.04), 0 2px 6px rgba(15, 21, 36, 0.05);
+  --shadow-md: 0 2px 4px rgba(15, 21, 36, 0.04), 0 8px 20px rgba(15, 21, 36, 0.07);
+  --shadow-lg: 0 8px 16px rgba(15, 21, 36, 0.06), 0 20px 40px rgba(15, 21, 36, 0.10);
+  --shadow-glow-ai: 0 8px 24px -6px rgba(90, 110, 248, 0.45);
 
   /* Tags de tema (pastel), usadas nas etiquetas de assunto */
-  --tag-blue-bg: #dbeafe;
+  --tag-blue-bg: #e2eafe;
   --tag-blue-fg: #1d4ed8;
-  --tag-green-bg: #d1fae5;
+  --tag-green-bg: #dcfae7;
   --tag-green-fg: #047857;
-  --tag-purple-bg: #ede9fe;
+  --tag-purple-bg: #efe9fe;
   --tag-purple-fg: #6d28d9;
-  --tag-pink-bg: #fce7f3;
+  --tag-pink-bg: #fce4f1;
   --tag-pink-fg: #be185d;
-  --tag-amber-bg: #fef3c7;
+  --tag-amber-bg: #fef1cd;
   --tag-amber-fg: #b45309;
   --tag-teal-bg: #ccfbf1;
   --tag-teal-fg: #0f766e;
@@ -69,12 +87,19 @@
   --color-popover-foreground: var(--popover-foreground);
 
   --color-navy: var(--navy);
+  --color-navy-2: var(--navy-2);
+  --color-navy-3: var(--navy-3);
   --color-navy-foreground: var(--navy-foreground);
   --color-navy-muted: var(--navy-muted);
+  --color-navy-border: var(--navy-border);
 
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-hover: var(--primary-hover);
+
+  --color-ai-from: var(--ai-from);
+  --color-ai-via: var(--ai-via);
+  --color-ai-to: var(--ai-to);
 
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -100,10 +125,11 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 3px);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) + 6px);
+  --radius-2xl: calc(var(--radius) + 12px);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -111,28 +137,36 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0b1220;
-    --foreground: #e7ecf5;
-    --card: #121a2c;
-    --card-foreground: #e7ecf5;
-    --popover: #121a2c;
-    --popover-foreground: #e7ecf5;
+    --background: #070a14;
+    --foreground: #e9ecf6;
+    --card: #111629;
+    --card-foreground: #e9ecf6;
+    --popover: #111629;
+    --popover-foreground: #e9ecf6;
 
-    --navy: #0a1224;
-    --navy-foreground: #f5f7fb;
-    --navy-muted: #1a2440;
+    --navy: #05070f;
+    --navy-2: #0a0f1f;
+    --navy-3: #0f1428;
+    --navy-foreground: #f7f8fc;
+    --navy-muted: #0f1428;
+    --navy-border: rgba(255, 255, 255, 0.07);
 
-    --secondary: #1a2440;
-    --secondary-foreground: #e7ecf5;
+    --secondary: #171d33;
+    --secondary-foreground: #e9ecf6;
 
-    --muted: #18213a;
-    --muted-foreground: #8b96ac;
+    --muted: #141a2e;
+    --muted-foreground: #8b93ad;
 
-    --accent: #182550;
-    --accent-foreground: #7fa2f8;
+    --accent: #171f3d;
+    --accent-foreground: #8ba4fb;
 
-    --border: #232f4d;
-    --input: #232f4d;
+    --border: #1f2540;
+    --input: #1f2540;
+
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.35);
+    --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.3), 0 10px 24px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.35), 0 24px 48px rgba(0, 0, 0, 0.45);
   }
 }
 
@@ -143,4 +177,26 @@ body {
 
 * {
   border-color: var(--border);
+}
+
+::selection {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* Texto com o gradiente de marca de IA */
+.text-gradient-ai {
+  background-image: var(--gradient-ai);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
 }

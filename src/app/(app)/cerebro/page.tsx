@@ -30,8 +30,8 @@ export default async function CerebroPage() {
       <>
         <TopBar title="Meu Cérebro" />
         <div className="flex flex-1 flex-col items-center justify-center gap-3 px-8 py-16 text-center">
-          <span className="flex size-14 items-center justify-center rounded-2xl bg-accent text-accent-foreground">
-            <Brain className="size-6" />
+          <span className="flex size-16 items-center justify-center rounded-3xl bg-[image:var(--gradient-ai)] text-white shadow-[var(--shadow-glow-ai)]">
+            <Brain className="size-7" />
           </span>
           <p className="text-base font-semibold text-foreground">O que a IA aprendeu sobre você</p>
           <p className="max-w-xs text-sm text-muted-foreground">
@@ -68,7 +68,7 @@ export default async function CerebroPage() {
         <Card>
           <CardContent className="flex flex-col gap-3 p-4">
             <div className="flex items-center gap-3">
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[image:var(--gradient-ai)] text-white shadow-[var(--shadow-glow-ai)]">
                 <Brain className="size-5" />
               </span>
               <div className="flex-1">
@@ -84,9 +84,9 @@ export default async function CerebroPage() {
         </Card>
 
         {brain.summary_quote && (
-          <Card className="bg-accent">
+          <Card className="border-none bg-[image:var(--gradient-ai)] shadow-[var(--shadow-glow-ai)]">
             <CardContent className="p-4">
-              <p className="text-sm italic text-accent-foreground">&ldquo;{brain.summary_quote}&rdquo;</p>
+              <p className="text-sm italic text-white/95">&ldquo;{brain.summary_quote}&rdquo;</p>
             </CardContent>
           </Card>
         )}

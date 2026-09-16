@@ -38,7 +38,7 @@ export default async function BuscarPage({
             defaultValue={q ?? ""}
             autoFocus
             placeholder="Buscar em livros, reflexões, cartas, relatos..."
-            className="h-11 w-full rounded-lg border border-input bg-card pl-9 pr-3 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="h-12 w-full rounded-full border border-input bg-muted/60 pl-10 pr-4 text-sm placeholder:text-muted-foreground transition-all duration-200 focus-visible:border-ring focus-visible:bg-card focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring/15"
           />
         </form>
       </div>
@@ -58,7 +58,7 @@ export default async function BuscarPage({
             const Icon = DOCUMENT_TYPE_ICONS[doc.type as DocumentType];
             return (
               <Link key={doc.id} href={`/biblioteca/${doc.id}`}>
-                <Card className="transition-shadow hover:shadow-md">
+                <Card className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-lg)]">
                   <CardContent className="flex items-center gap-3 p-3.5">
                     <span className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">
                       <Icon className="size-5" />

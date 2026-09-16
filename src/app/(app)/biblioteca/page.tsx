@@ -54,12 +54,12 @@ export default async function BibliotecaPage({
               name="q"
               defaultValue={q ?? ""}
               placeholder="Buscar na biblioteca..."
-              className="h-10 w-full rounded-lg border border-input bg-card pl-9 pr-3 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="h-11 w-full rounded-full border border-input bg-muted/60 pl-10 pr-3 text-sm placeholder:text-muted-foreground transition-all duration-200 focus-visible:border-ring focus-visible:bg-card focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring/15"
             />
           </form>
           <Link
             href="/biblioteca/adicionar"
-            className="flex h-10 shrink-0 items-center gap-1.5 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary-hover"
+            className="flex h-11 shrink-0 items-center gap-1.5 rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground shadow-[var(--shadow-sm)] transition-all duration-200 hover:-translate-y-px hover:bg-primary-hover hover:shadow-[var(--shadow-md)] active:scale-[0.97]"
           >
             <Plus className="size-4" />
             Adicionar
@@ -97,9 +97,9 @@ export default async function BibliotecaPage({
             const Icon = DOCUMENT_TYPE_ICONS[doc.type as DocumentType];
             return (
               <Link key={doc.id} href={`/biblioteca/${doc.id}`}>
-                <Card className="transition-shadow hover:shadow-md">
+                <Card className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-lg)]">
                   <CardContent className="flex items-center gap-3 p-3.5">
-                    <span className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+                    <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-accent text-accent-foreground">
                       <Icon className="size-5" />
                     </span>
                     <div className="min-w-0 flex-1">
