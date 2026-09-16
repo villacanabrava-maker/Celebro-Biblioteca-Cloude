@@ -41,9 +41,10 @@ recebe resumos e temas gerados por IA, descobre o que a IA aprendeu sobre você
   upload (e sob demanda com "Gerar novamente"). Suporta extração de texto
   de `.txt`, `.md`, `.pdf` e `.docx` — outros formatos (ex.: `.epub`,
   imagens) ainda não têm extração automática.
-- [ ] **Fase 5 — Meu Cérebro**
-  Painel com o que a IA aprendeu sobre o usuário (estilo de escrita, temas
-  recorrentes, forma de pensar), sempre com evidências rastreáveis.
+- [x] **Fase 5 — Meu Cérebro**
+  Análise agregada por IA (estilo de escrita, temas recorrentes, forma de
+  pensar, 6 abas) a partir das memórias já extraídas. Exige pelo menos 3
+  memórias; pode ser atualizada a qualquer momento.
 - [ ] **Fase 6 — Criar Reflexão + Minhas Reflexões**
   Fluxo guiado de 7 passos para transformar conteúdo externo em reflexão
   pessoal, e histórico de reflexões por status.
