@@ -49,15 +49,22 @@ desenvolvimento novo acontece no Cérebro Autoral (schemas novos, abaixo).
   espaço por usuário). Zero avisos de segurança. Upload/hash/dedupe de verdade
   fica para a Fase 3, junto com o pipeline — é quando upload passa a fazer
   sentido de verdade (dispara processamento).
-- [ ] **Fase 3 — Pipeline documental (`processar_obra()`)**
-  As 18 etapas do workflow (validar → extrair → normalizar → estrutura → fragmentos →
-  sínteses → elementos → taxonomia → relações → embeddings → índices → análise autoral
-  local → validação → publicar → avaliar participação → atualizar Cérebro), com
-  idempotência e execução durável.
-- [ ] **Fase 4 — Documento Processado**
-  `processamento.documentos_processados` + `secoes` + `fragmentos` + `sinteses` +
-  `elementos` + `evidencias` + `vetores` + `relacoes_elementos`. Regra do documento
-  atômico (candidato → ativo).
+- [x] **Fase 3+4 — Processamento: fundação de dados** (Pipeline + Documento Processado)
+  As 10 tabelas do schema `processamento` (`execucoes`, `etapas_execucao`,
+  `documentos_processados`, `secoes`, `fragmentos`, `sinteses`, `elementos`,
+  `evidencias`, `vetores`, `relacoes_elementos`) — completas, com RLS, vocabulário
+  controlado, FK composta (tabela+usuário) na cadeia inteira para nunca vazar dado
+  entre usuários, busca textual em português (gerada automaticamente em
+  `fragmentos.vetor_textual`) e índice HNSW para embeddings (1536 dimensões). Zero
+  avisos de segurança; 33 índices de performance corrigidos.
+  **Pesquisa e decisão importante:** avaliei o Vercel Workflows para orquestrar as 18
+  etapas de forma durável — descartado por trazer 16 vulnerabilidades (14 "high") sem
+  correção limpa, claramente ainda em beta. Optamos por uma Vercel Function de até 30
+  minutos (plano Pro) + `etapas_execucao` como livro de bordo para retry/resume feito
+  por nós. Detalhes completos em `docs/DECISOES.md`.
+  **O que falta:** o código de verdade do `processar_obra()` (as 18 etapas em si) e o
+  fluxo de upload que preenche `biblioteca.obras`/`versoes_obras` — é a próxima
+  entrega concreta, ainda sem tela nem rota no app.
 - [ ] **Fase 5 — Taxonomia inteligente**
   Motor taxonômico completo (buscar antes de propor conceito novo), UI de revisão de
   conceitos.
