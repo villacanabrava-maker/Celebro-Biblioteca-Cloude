@@ -117,6 +117,27 @@ um dos 8 schemas novos.
 
 ---
 
+## 2026-09-16 — Limite diário de deploys da Vercel (plano gratuito)
+
+**Problema.** Por volta das 23:10–23:17 (horário do servidor), dois pushes seguidos
+(`85a723e` — Fundação do Cérebro Autoral — e `79360a6` — redesenho visual) não dispararam
+deploy automático. Ao tentar forçar manualmente, a Vercel retornou erro 402:
+`"Resource is limited - try again in 24 hours (more than 100, code:
+api-deployments-free-per-day)"`. Ou seja: o plano gratuito (Hobby) da Vercel permite no
+máximo 100 deploys por dia, e essa cota se esgotou só nesta sessão (cada fase publicada
+gerou pelo menos um deploy).
+
+**Consequência prática.** O código de todas as fases, incluindo o redesenho visual, está
+100% commitado e enviado ao GitHub — nada foi perdido. Mas o site publicado
+(`cerebro-biblioteca-cloude-naninne.vercel.app`) ainda está rodando a versão da Fase 5
+(commit `7f0da88`), sem a Fundação do Cérebro Autoral nem o redesenho visual, até a cota
+resetar (~24h) ou até alguém disparar um novo deploy pelo painel da Vercel.
+
+**Decisão.** A partir de agora, vou agrupar mais commits antes de cada push/deploy — em vez
+de publicar a cada micro-etapa, publico ao final de blocos de trabalho maiores — para não
+esgotar essa cota de novo. Se o ritmo de trabalho continuar intenso, vale considerar o plano
+Vercel Pro (pago, sem esse limite diário) — decisão do usuário, não tomada aqui.
+
 ## Pendências em aberto (para decidir com o usuário mais adiante)
 
 - Fluxo de Git com `main` protegida + `feature/*` + Pull Request + CI (hoje seguimos
