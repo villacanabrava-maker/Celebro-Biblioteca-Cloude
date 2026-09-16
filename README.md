@@ -1,36 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cérebro Biblioteca
 
-## Getting Started
+Seu acervo. Sua inteligência. Novas reflexões.
 
-First, run the development server:
+Aplicativo pessoal onde você guarda documentos (livros, cartas, relatos, textos),
+recebe resumos e temas gerados por IA, descobre o que a IA aprendeu sobre você
+("Meu Cérebro") e transforma conteúdos externos em reflexões próprias.
+
+> Este README é o painel de acompanhamento do projeto. Toda fase concluída é
+> registrada aqui, em português simples, para que qualquer pessoa (mesmo sem
+> conhecimento técnico) consiga entender o que já existe e o que falta.
+
+## Decisões já tomadas
+
+| Decisão | Escolha |
+|---|---|
+| Nome do app | **Cérebro Biblioteca** |
+| Público | **Multiusuário** — cada pessoa tem sua própria biblioteca, cérebro e reflexões, totalmente privados |
+| IA usada | **OpenAI (GPT)** — chamadas feitas só pelo servidor, a chave nunca aparece no navegador |
+| Entrada de documentos | **Upload manual** pelo app (sem sincronização automática de pastas) |
+| Hospedagem | **Vercel** (deploy automático a partir do GitHub) |
+| Banco de dados / autenticação / arquivos | **Supabase** (Postgres + Auth + Storage) |
+
+## Status das fases
+
+- [x] **Fase 1 — Scaffold, design system e layout base**
+  Projeto Next.js criado; paleta de cores e componentes visuais extraídos das
+  imagens de referência; navegação inferior (Início, Biblioteca, Cérebro,
+  Reflexão, Reflexões); páginas de Login e Início com visual já fiel ao
+  design; telas de espera para as demais seções.
+- [ ] **Fase 2 — Supabase: schema multiusuário + autenticação**
+  Tabelas do banco de dados com isolamento por usuário (RLS) e login real
+  (e-mail/senha + Google).
+- [ ] **Fase 3 — Biblioteca: upload real + detalhe do documento**
+  Enviar arquivos de verdade para o Supabase Storage, listar, filtrar e
+  buscar a biblioteca, ver os detalhes de cada documento.
+- [ ] **Fase 4 — Integração com a OpenAI**
+  Geração automática de resumo, temas e "memórias" (trechos-chave) de cada
+  documento enviado.
+- [ ] **Fase 5 — Meu Cérebro**
+  Painel com o que a IA aprendeu sobre o usuário (estilo de escrita, temas
+  recorrentes, forma de pensar), sempre com evidências rastreáveis.
+- [ ] **Fase 6 — Criar Reflexão + Minhas Reflexões**
+  Fluxo guiado de 7 passos para transformar conteúdo externo em reflexão
+  pessoal, e histórico de reflexões por status.
+- [ ] **Fase 7 — Configurações + publicação**
+  Página de configurações e o app publicado ao vivo na Vercel.
+
+## Como rodar o projeto localmente
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [http://localhost:3000](http://localhost:3000) no navegador.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Variáveis de ambiente
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Copie `.env.example` para `.env.local` e preencha com os valores reais
+(o `.env.local` nunca é enviado ao GitHub — está protegido pelo `.gitignore`).
 
-## Learn More
+```
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+OPENAI_API_KEY=
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Stack técnica
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Next.js 16** (App Router) + **TypeScript**
+- **Tailwind CSS v4** para estilo
+- Componentes de interface construídos à mão no estilo shadcn/ui (com Radix
+  UI por baixo), porque o registro oficial `ui.shadcn.com` está bloqueado
+  pela política de rede deste ambiente de desenvolvimento
+- **Supabase**: banco de dados Postgres, autenticação e armazenamento de
+  arquivos
+- **OpenAI**: geração de resumos, temas, memórias e reflexões
+- **Vercel**: hospedagem e deploy automático
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Estrutura de pastas
 
-## Deploy on Vercel
+```
+src/
+  app/
+    login/            → tela de login
+    (app)/             → área logada (com navegação inferior)
+      inicio/          → painel inicial
+      biblioteca/       → biblioteca de documentos
+      cerebro/          → "Meu Cérebro"
+      reflexao/         → criar reflexão
+      reflexoes/        → histórico de reflexões
+      configuracoes/    → configurações
+      buscar/           → busca geral
+  components/
+    ui/                → componentes básicos (botão, card, tag, aba...)
+    layout/             → navegação, barra superior, logo
+  lib/                  → funções utilitárias e integrações (Supabase, etc.)
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Links do projeto
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Repositório: https://github.com/villacanabrava-maker/Celebro-Biblioteca-Cloude
+- Banco de dados (Supabase): projeto `Celebro-Biblioteca-Cloude`
