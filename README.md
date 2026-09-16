@@ -28,9 +28,10 @@ recebe resumos e temas gerados por IA, descobre o que a IA aprendeu sobre você
   imagens de referência; navegação inferior (Início, Biblioteca, Cérebro,
   Reflexão, Reflexões); páginas de Login e Início com visual já fiel ao
   design; telas de espera para as demais seções.
-- [ ] **Fase 2 — Supabase: schema multiusuário + autenticação**
-  Tabelas do banco de dados com isolamento por usuário (RLS) e login real
-  (e-mail/senha + Google).
+- [x] **Fase 2 — Supabase: schema multiusuário + autenticação**
+  8 tabelas com isolamento por usuário (RLS), bucket de arquivos privado,
+  login/cadastro/logout reais (e-mail/senha; Google exige configurar o
+  provedor no painel do Supabase). Zero avisos de segurança no banco.
 - [ ] **Fase 3 — Biblioteca: upload real + detalhe do documento**
   Enviar arquivos de verdade para o Supabase Storage, listar, filtrar e
   buscar a biblioteca, ver os detalhes de cada documento.
@@ -102,3 +103,25 @@ src/
 
 - Repositório: https://github.com/villacanabrava-maker/Celebro-Biblioteca-Cloude
 - Banco de dados (Supabase): projeto `Celebro-Biblioteca-Cloude`
+- Deploy (Vercel): projeto `cerebro-biblioteca-cloude` — **pendente**: faltam
+  as variáveis de ambiente de produção (veja "Ação pendente" abaixo)
+
+## ⚠️ Ação pendente: variáveis de ambiente na Vercel
+
+O deploy na Vercel falha até estas 3 variáveis serem cadastradas lá (eu não
+tenho permissão de ferramenta para fazer isso por você — só o painel da
+Vercel permite). Passo a passo:
+
+1. Acesse https://vercel.com/naninne/cerebro-biblioteca-cloude/settings/environment-variables
+2. Adicione, marcando **Production**, **Preview** e **Development** em cada uma:
+
+   | Nome | Valor |
+   |---|---|
+   | `NEXT_PUBLIC_SUPABASE_URL` | `https://xaxhxkmgrneutpenesdz.supabase.co` |
+   | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | `sb_publishable_3xT0uqJxsiD2LcMOtcM3Jg_DZk0sX7K` |
+   | `OPENAI_API_KEY` | (a chave da OpenAI que você me enviou no chat) |
+
+3. Me avise que terminou — eu disparo um novo deploy na hora.
+
+Essa é a única etapa manual que só você consegue fazer; todo o resto eu
+continuo sozinho.
