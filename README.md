@@ -1,14 +1,34 @@
-# Cérebro Biblioteca
+# Cérebro Biblioteca → Cérebro Autoral
 
 Seu acervo. Sua inteligência. Novas reflexões.
-
-Aplicativo pessoal onde você guarda documentos (livros, cartas, relatos, textos),
-recebe resumos e temas gerados por IA, descobre o que a IA aprendeu sobre você
-("Meu Cérebro") e transforma conteúdos externos em reflexões próprias.
 
 > Este README é o painel de acompanhamento do projeto. Toda fase concluída é
 > registrada aqui, em português simples, para que qualquer pessoa (mesmo sem
 > conhecimento técnico) consiga entender o que já existe e o que falta.
+
+## 📖 Leia primeiro: o projeto cresceu
+
+Em 2026-09-16, o usuário compartilhou 4 documentos definindo uma visão de produto
+**muito mais ampla**: o **Cérebro Autoral** — um sistema que aprende não só os temas do que
+você escreve, mas a *metodologia* do seu pensamento (como você argumenta, estrutura,
+transita entre ideias, conclui), para ajudar a escrever novas reflexões realmente suas.
+
+Essa visão completa está documentada, na íntegra, em `docs/`:
+
+- [`docs/VISAO_PRODUTO.md`](docs/VISAO_PRODUTO.md) — o que estamos construindo e como
+  trabalhamos juntos.
+- [`docs/ARQUITETURA_TECNICA.md`](docs/ARQUITETURA_TECNICA.md) — como o sistema funciona
+  por dentro.
+- [`docs/DICIONARIO_MESTRE_DADOS.md`](docs/DICIONARIO_MESTRE_DADOS.md) — cada tabela, campo
+  e vocabulário do banco de dados.
+- [`docs/PLANO_IMPLEMENTACAO.md`](docs/PLANO_IMPLEMENTACAO.md) — a ordem de construção.
+- [`docs/DECISOES.md`](docs/DECISOES.md) — decisões importantes e por quê.
+- [`docs/ESTADO_ATUAL.md`](docs/ESTADO_ATUAL.md) — **o roteiro de fases atualizado**, com
+  o que já está pronto no Cérebro Autoral.
+
+O que este README continua guardando abaixo é o histórico da **primeira versão** (o
+"Cérebro Biblioteca" simples, fases 1–5, já em produção) — que segue no ar, intacta,
+enquanto o Cérebro Autoral é construído por cima, em paralelo.
 
 ## Decisões já tomadas
 
@@ -21,7 +41,10 @@ recebe resumos e temas gerados por IA, descobre o que a IA aprendeu sobre você
 | Hospedagem | **Vercel** (deploy automático a partir do GitHub) |
 | Banco de dados / autenticação / arquivos | **Supabase** (Postgres + Auth + Storage) |
 
-## Status das fases
+## Status das fases (v1 — "Cérebro Biblioteca", schema `public`)
+
+> A partir daqui, o roteiro de fases oficial passa a ser `docs/ESTADO_ATUAL.md`.
+> Esta seção fica como registro histórico da v1.
 
 - [x] **Fase 1 — Scaffold, design system e layout base**
   Projeto Next.js criado; paleta de cores e componentes visuais extraídos das
@@ -45,11 +68,14 @@ recebe resumos e temas gerados por IA, descobre o que a IA aprendeu sobre você
   Análise agregada por IA (estilo de escrita, temas recorrentes, forma de
   pensar, 6 abas) a partir das memórias já extraídas. Exige pelo menos 3
   memórias; pode ser atualizada a qualquer momento.
-- [ ] **Fase 6 — Criar Reflexão + Minhas Reflexões**
-  Fluxo guiado de 7 passos para transformar conteúdo externo em reflexão
-  pessoal, e histórico de reflexões por status.
+- [ ] **Fase 6 — Criar Reflexão + Minhas Reflexões** — *pausada*
+  Estava em andamento quando os 4 documentos do Cérebro Autoral chegaram.
+  Decisão: o Motor de Reflexões "de verdade" (com plano, auditoria e revisão
+  humana) nasce direto no Cérebro Autoral, então a versão simples em
+  `public` não será finalizada. Ver `docs/DECISOES.md`.
 - [ ] **Fase 7 — Configurações + publicação**
-  Página de configurações e o app publicado ao vivo na Vercel.
+  Página de configurações. O app já está publicado ao vivo na Vercel desde
+  a Fase 3.
 
 ## Como rodar o projeto localmente
 
