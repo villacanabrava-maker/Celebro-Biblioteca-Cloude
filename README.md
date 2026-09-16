@@ -36,9 +36,11 @@ recebe resumos e temas gerados por IA, descobre o que a IA aprendeu sobre você
   Upload de arquivo ou texto para o Supabase Storage; listagem com filtros
   por tipo e busca; página de detalhe com abas (Resumo, Conteúdo, Memórias,
   Anotações), metadados, editar e excluir; busca funcional em `/buscar`.
-- [ ] **Fase 4 — Integração com a OpenAI**
-  Geração automática de resumo, temas e "memórias" (trechos-chave) de cada
-  documento enviado.
+- [x] **Fase 4 — Integração com a OpenAI**
+  Resumo, tema principal, temas e memórias gerados automaticamente após o
+  upload (e sob demanda com "Gerar novamente"). Suporta extração de texto
+  de `.txt`, `.md`, `.pdf` e `.docx` — outros formatos (ex.: `.epub`,
+  imagens) ainda não têm extração automática.
 - [ ] **Fase 5 — Meu Cérebro**
   Painel com o que a IA aprendeu sobre o usuário (estilo de escrita, temas
   recorrentes, forma de pensar), sempre com evidências rastreáveis.
