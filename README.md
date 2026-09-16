@@ -32,9 +32,10 @@ recebe resumos e temas gerados por IA, descobre o que a IA aprendeu sobre você
   8 tabelas com isolamento por usuário (RLS), bucket de arquivos privado,
   login/cadastro/logout reais (e-mail/senha; Google exige configurar o
   provedor no painel do Supabase). Zero avisos de segurança no banco.
-- [ ] **Fase 3 — Biblioteca: upload real + detalhe do documento**
-  Enviar arquivos de verdade para o Supabase Storage, listar, filtrar e
-  buscar a biblioteca, ver os detalhes de cada documento.
+- [x] **Fase 3 — Biblioteca: upload real + detalhe do documento**
+  Upload de arquivo ou texto para o Supabase Storage; listagem com filtros
+  por tipo e busca; página de detalhe com abas (Resumo, Conteúdo, Memórias,
+  Anotações), metadados, editar e excluir; busca funcional em `/buscar`.
 - [ ] **Fase 4 — Integração com a OpenAI**
   Geração automática de resumo, temas e "memórias" (trechos-chave) de cada
   documento enviado.
@@ -103,25 +104,8 @@ src/
 
 - Repositório: https://github.com/villacanabrava-maker/Celebro-Biblioteca-Cloude
 - Banco de dados (Supabase): projeto `Celebro-Biblioteca-Cloude`
-- Deploy (Vercel): projeto `cerebro-biblioteca-cloude` — **pendente**: faltam
-  as variáveis de ambiente de produção (veja "Ação pendente" abaixo)
-
-## ⚠️ Ação pendente: variáveis de ambiente na Vercel
-
-O deploy na Vercel falha até estas 3 variáveis serem cadastradas lá (eu não
-tenho permissão de ferramenta para fazer isso por você — só o painel da
-Vercel permite). Passo a passo:
-
-1. Acesse https://vercel.com/naninne/cerebro-biblioteca-cloude/settings/environment-variables
-2. Adicione, marcando **Production**, **Preview** e **Development** em cada uma:
-
-   | Nome | Valor |
-   |---|---|
-   | `NEXT_PUBLIC_SUPABASE_URL` | `https://xaxhxkmgrneutpenesdz.supabase.co` |
-   | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | `sb_publishable_3xT0uqJxsiD2LcMOtcM3Jg_DZk0sX7K` |
-   | `OPENAI_API_KEY` | (a chave da OpenAI que você me enviou no chat) |
-
-3. Me avise que terminou — eu disparo um novo deploy na hora.
-
-Essa é a única etapa manual que só você consegue fazer; todo o resto eu
-continuo sozinho.
+- Deploy (Vercel): projeto `cerebro-biblioteca-cloude` — **no ar**, build
+  passando, variáveis de ambiente configuradas.
+  Link: https://cerebro-biblioteca-cloude-naninne.vercel.app (a Vercel pode
+  pedir para você confirmar login na sua conta — é a proteção padrão do
+  time, não afeta o uso normal)
