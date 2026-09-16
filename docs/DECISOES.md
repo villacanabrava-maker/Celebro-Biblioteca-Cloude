@@ -138,6 +138,22 @@ de publicar a cada micro-etapa, publico ao final de blocos de trabalho maiores �
 esgotar essa cota de novo. Se o ritmo de trabalho continuar intenso, vale considerar o plano
 Vercel Pro (pago, sem esse limite diário) — decisão do usuário, não tomada aqui.
 
+**Atualização (mesmo dia, ~23:26):** o usuário assinou o plano **Vercel Pro**, removendo o
+limite diário. Ao forçar manualmente um novo deploy pela ferramenta de automação
+(`create_git_project`), o build falhou com `Missing credentials ... OPENAI_API_KEY` — não é
+falta da variável no painel, é que essa ferramenta, ao reutilizar um projeto já existente,
+cria um deploy de **Preview**, não de **Production** (`target: null` na resposta da API).
+As variáveis de ambiente do projeto estão marcadas só para o ambiente "Produção" (conforme
+print enviado pelo usuário), então um deploy de Preview não enxerga nenhuma delas — a
+OpenAI falha primeiro porque o SDK lança erro assim que é instanciado sem chave; o Supabase
+não lançaria erro do mesmo jeito (só falharia depois, ao ser efetivamente usado).
+
+**Decisão.** Deploys manuais de emergência (fora de um push) via essa ferramenta só devem
+ser usados quando realmente não há como esperar um push normal — porque não respeitam o
+ambiente "Produção". O caminho correto e já validado dezenas de vezes nesta sessão continua
+sendo: commitar, dar `git push` na branch de produção (`claude/bold-pasteur-cfum8r`) e deixar
+a integração GitHub→Vercel criar o deploy de produção de verdade automaticamente.
+
 ## Pendências em aberto (para decidir com o usuário mais adiante)
 
 - Fluxo de Git com `main` protegida + `feature/*` + Pull Request + CI (hoje seguimos
