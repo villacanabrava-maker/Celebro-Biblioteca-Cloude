@@ -9,7 +9,8 @@ export function ComingSoon({
   icon: LucideIcon;
   title: string;
   description: string;
-  fase: string;
+  /** Quando definido, mostra o selo "Chega na {fase}" (ex.: "Fase 5"). Omita para estados vazios de algo que já funciona. */
+  fase?: string;
 }) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-3 px-8 py-20 text-center">
@@ -18,9 +19,11 @@ export function ComingSoon({
       </span>
       <p className="text-base font-semibold text-foreground">{title}</p>
       <p className="max-w-xs text-sm text-muted-foreground">{description}</p>
-      <span className="mt-2 rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
-        Chega na {fase}
-      </span>
+      {fase && (
+        <span className="mt-2 rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+          Chega na {fase}
+        </span>
+      )}
     </div>
   );
 }
