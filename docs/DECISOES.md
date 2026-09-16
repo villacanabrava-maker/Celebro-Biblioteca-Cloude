@@ -154,6 +154,33 @@ ambiente "Produção". O caminho correto e já validado dezenas de vezes nesta s
 sendo: commitar, dar `git push` na branch de produção (`claude/bold-pasteur-cfum8r`) e deixar
 a integração GitHub→Vercel criar o deploy de produção de verdade automaticamente.
 
+## 2026-09-16 — Fase 1 (Sistema + Taxonomia): lacunas preenchidas no dicionário
+
+**Problema.** O Dicionário Mestre não especifica todos os detalhes de toda tabela — alguns
+campos `estado` não têm vocabulário fechado definido (ex.: `taxonomia.conceitos.estado`,
+`sistema.versoes_pipeline.estado`), e a ordem de migrations do próprio dicionário (§17)
+prevê criar tabelas por schema primeiro e só depois as constraints/FKs que cruzam schemas —
+o que significa que algumas colunas nascem sem FK e ganham a referência formal mais tarde.
+
+**Decisões tomadas (documentadas aqui por não estarem explícitas no dicionário):**
+- `sistema.versoes_pipeline.estado` e `taxonomia.conceitos.estado`/`taxonomia.versoes.estado`
+  seguem o mesmo vocabulário usado em `cerebro_autoral.versoes` (`rascunho`/`ativa`/
+  `arquivada` para versões; `ativo`/`obsoleto` para conceitos individuais) — por
+  consistência com o resto do dicionário, não por estar escrito lá.
+- `taxonomia.versoes` e `sistema.versoes_pipeline` ganharam uma linha semente "1.0" em
+  estado `rascunho` — é só a fundação; a curadoria de conceitos reais da Taxonomia Mestre
+  (dicionário §17, passo 17 "Seeds da Taxonomia Mestre") fica para quando o conteúdo for
+  realmente definido, não nesta fase estrutural.
+- `sistema.modelos_ia` foi semeado com os modelos que o app v1 já usa na prática
+  (`gpt-4o-mini` para extração/análise/taxonomia/cérebro/redação/auditoria,
+  `text-embedding-3-small` para embedding, 1536 dimensões — batendo com o `vector(1536)`
+  já criado na Fase 0). Isso não é a escolha final de modelos por função (o dicionário §19
+  lista isso como decisão deliberadamente adiada) — é só um catálogo funcional inicial,
+  fácil de trocar depois sem mexer em código (a ideia central do `sistema.modelos_ia`).
+- `taxonomia.classificacoes_elementos.elemento_id` foi criado como `uuid not null` **sem**
+  FK para `processamento.elementos` (que ainda não existe). A FK será adicionada por uma
+  migration própria assim que a Fase 4 (Documento Processado) criar essa tabela.
+
 ## Pendências em aberto (para decidir com o usuário mais adiante)
 
 - Fluxo de Git com `main` protegida + `feature/*` + Pull Request + CI (hoje seguimos

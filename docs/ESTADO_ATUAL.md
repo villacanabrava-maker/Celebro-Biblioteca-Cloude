@@ -32,11 +32,15 @@ desenvolvimento novo acontece no Cérebro Autoral (schemas novos, abaixo).
   `auditoria`, `sistema`, `aplicacao`) com `COMMENT ON SCHEMA`, função utilitária
   `public.definir_atualizado_em()`. Zero avisos de segurança. Documentos-fonte salvos em
   `docs/`. Migration: `fase0_fundacao_cerebro_autoral`.
-- [ ] **Fase 1 — Sistema + Taxonomia (base)**
-  Tabelas de `sistema` (modelos de IA, prompts, versões de pipeline, configurações do
-  usuário) e de `taxonomia` (versões, conceitos, termos, relações) — pré-requisito para
-  tudo que vem depois, porque `processamento` e `cerebro_autoral` referenciam
-  `versao_taxonomia_id`, `modelo_ia_id`, `versao_prompt_id`.
+- [x] **Fase 1 — Sistema + Taxonomia (base)**
+  10 tabelas: `sistema` (modelos_ia, prompts, versoes_prompts, versoes_pipeline,
+  configuracoes_usuario) e `taxonomia` (versoes, conceitos, termos, relacoes,
+  classificacoes_elementos). RLS: tabelas globais somente leitura para autenticados;
+  `configuracoes_usuario` e `classificacoes_elementos` privadas por usuário. Semeado:
+  7 modelos de IA (gpt-4o-mini + text-embedding-3-small), versão 1.0 do pipeline e da
+  Taxonomia Mestre (ambas em rascunho — conteúdo real vem em fase própria). Zero avisos
+  de segurança; 1 índice de performance corrigido. Sem UI ainda (fase de fundação de
+  dados) — `elemento_id` de `classificacoes_elementos` fica sem FK até a Fase 4.
 - [ ] **Fase 2 — Biblioteca**
   `biblioteca.obras` + `biblioteca.versoes_obras`, bucket de Storage
   `originais-biblioteca`, upload com hash/dedupe, classificação de autoria
