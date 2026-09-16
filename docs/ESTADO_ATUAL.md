@@ -41,10 +41,14 @@ desenvolvimento novo acontece no Cérebro Autoral (schemas novos, abaixo).
   Taxonomia Mestre (ambas em rascunho — conteúdo real vem em fase própria). Zero avisos
   de segurança; 1 índice de performance corrigido. Sem UI ainda (fase de fundação de
   dados) — `elemento_id` de `classificacoes_elementos` fica sem FK até a Fase 4.
-- [ ] **Fase 2 — Biblioteca**
-  `biblioteca.obras` + `biblioteca.versoes_obras`, bucket de Storage
-  `originais-biblioteca`, upload com hash/dedupe, classificação de autoria
-  (`autoral`/`externa`) e participação no Cérebro.
+- [x] **Fase 2 — Biblioteca**
+  `biblioteca.obras` + `biblioteca.versoes_obras` (RLS por usuário, FK composta
+  obra+usuário para nunca vincular versão à obra de outra pessoa), vocabulário
+  controlado de `tipo_obra`/`autoria`/`participacao_cerebro`/`estado`, busca
+  textual em português. Bucket de Storage `originais-biblioteca` (privado, um
+  espaço por usuário). Zero avisos de segurança. Upload/hash/dedupe de verdade
+  fica para a Fase 3, junto com o pipeline — é quando upload passa a fazer
+  sentido de verdade (dispara processamento).
 - [ ] **Fase 3 — Pipeline documental (`processar_obra()`)**
   As 18 etapas do workflow (validar → extrair → normalizar → estrutura → fragmentos →
   sínteses → elementos → taxonomia → relações → embeddings → índices → análise autoral
