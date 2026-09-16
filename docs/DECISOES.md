@@ -181,6 +181,61 @@ o que significa que algumas colunas nascem sem FK e ganham a referência formal 
   FK para `processamento.elementos` (que ainda não existe). A FK será adicionada por uma
   migration própria assim que a Fase 4 (Documento Processado) criar essa tabela.
 
+## 2026-09-16 — Fase 3: como executar o pipeline documental de forma durável
+
+**Problema.** O Dicionário Mestre e a Arquitetura Técnica exigem que o `processar_obra()`
+seja executado de forma durável: cada uma das 18 etapas precisa suportar retry, resume e
+idempotência (docs/ARQUITETURA_TECNICA.md §17, §33-34), sem depender de uma única requisição
+HTTP frágil. O documento de Plano de Construção também lista `Vercel Workflows` na stack
+recomendada, mas explicitamente como algo "a avaliar" e pede pesquisa antes de adotar
+qualquer tecnologia (docs/VISAO_PRODUTO.md §1-3: "pesquise antes de supor", "não invente
+APIs", "confirme na documentação atual").
+
+**Pesquisa realizada.** Consultei a documentação oficial atual da Vercel
+(`vercel.com/docs/workflows`) em 2026-09-16. Confirmei que **Vercel Workflows** é um produto
+real e atual: diretivas `'use workflow'`/`'use step'`, retries automáticos por etapa,
+`sleep()`, e — particularmente relevante — hooks com `.resume()` para pausar um workflow
+esperando aprovação humana (bateria certinho com a "revisão humana" do Motor de Reflexões,
+Fase 10). Testei a instalação real (`npm i workflow`) neste projeto.
+
+**O que encontrei.** A instalação (`workflow@4.0.1-beta.0` — o número da versão já denuncia
+beta) trouxe **16 vulnerabilidades** (14 delas "high"), vindas de dependências transitivas
+(`nanoid`, `undici`) desatualizadas nos pacotes `@workflow/core`, `@workflow/world-local` e
+`@workflow/world-vercel`. Rodei `npm audit fix` e `npm audit fix --force`: não há correção
+limpa — a única saída que o npm oferece é um **downgrade forçado para `workflow@2.0.6`**,
+uma versão major inteira mais antiga. A instalação também trouxe adaptadores para Astro,
+Nest, Nuxt, SvelteKit e Vite que este projeto não usa — sinal de um pacote "guarda-chuva"
+ainda pouco maduro, não recortado para o que precisamos.
+
+**Decisão.** **Não adotar Vercel Workflows agora.** Desinstalei o pacote
+(`npm uninstall workflow`) e voltei o projeto para 0 vulnerabilidades. Em vez disso, a Fase 3
+vai usar uma abordagem mais simples e inteiramente sob nosso controle:
+
+1. Cada execução do `processar_obra()` roda dentro de uma única Vercel Function (Route
+   Handler), com `maxDuration` alto — confirmado na documentação atual que, com o plano Pro
+   (que o usuário já assinou) e Fluid Compute, `maxDuration` pode chegar a **1800 segundos
+   (30 minutos)** por invocação, o que é folgado até para livros grandes.
+2. `processamento.execucoes` e `processamento.etapas_execucao` (do próprio Dicionário
+   Mestre) fazem o papel de "livro de bordo": cada etapa grava seu estado
+   (`pendente`/`executando`/`concluida`/`falhou`) e uma `chave_idempotencia` antes de
+   começar. Se a função cair no meio do caminho, uma nova chamada para a mesma execução
+   confere `etapas_execucao` e pula direto para a primeira etapa ainda não concluída, em vez
+   de recomeçar do zero — o mesmo resultado prático de "resume", só que decidido no nosso
+   próprio código, sem depender de infraestrutura de terceiros ainda instável.
+
+**Motivo.** Casa com o princípio do próprio projeto de "evitar complexidade desnecessária"
+(docs/VISAO_PRODUTO.md §48) e "validar antes de persistir, testar antes de publicar" — betar
+o motor de confiabilidade de todo o Cérebro Autoral num pacote com vulnerabilidades sem
+correção limpa e claramente em fase beta seria o oposto disso. A tabela
+`etapas_execucao` já prevista no dicionário entrega quase todo o valor prático (retry,
+observabilidade, idempotência) sem esse risco.
+
+**Consequências.** Documentos muito grandes que se aproximarem do limite de 30 minutos vão
+precisar de uma solução mais sofisticada (dividir em múltiplas invocações encadeadas). Isso
+não é um problema agora — fica registrado aqui para revisitar se/quando isso acontecer na
+prática, e para reavaliar o Vercel Workflows futuramente, quando (e se) sair do beta com
+dependências corrigidas.
+
 ## Pendências em aberto (para decidir com o usuário mais adiante)
 
 - Fluxo de Git com `main` protegida + `feature/*` + Pull Request + CI (hoje seguimos
