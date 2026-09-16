@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatusBadge } from "@/components/library/status-badge";
 import { DocumentActions } from "@/components/library/document-actions";
 import { DocumentNotes } from "@/components/library/document-notes";
+import { ProcessDocumentButton } from "@/components/library/process-document-button";
 import { createClient } from "@/lib/supabase/server";
 import {
   DOCUMENT_TYPE_ICONS,
@@ -71,18 +72,23 @@ export default async function DocumentoPage({ params }: { params: Promise<{ id: 
 
           <TabsContent value="resumo">
             <Card>
-              <CardContent className="flex flex-col items-start gap-2 p-4">
+              <CardContent className="flex flex-col items-start gap-3 p-4">
                 <span className="flex items-center gap-1.5 text-sm font-semibold text-primary">
                   <Sparkles className="size-4" /> Resumo gerado pela IA
                 </span>
                 {doc.ai_summary ? (
                   <p className="text-sm text-foreground">{doc.ai_summary}</p>
+                ) : doc.status === "erro" ? (
+                  <p className="text-sm text-destructive">
+                    Não foi possível processar este documento (formato não suportado ou erro na
+                    IA). Você pode tentar novamente.
+                  </p>
                 ) : (
                   <p className="text-sm text-muted-foreground">
-                    Este documento ainda não foi processado pela IA. A geração automática de
-                    resumo, temas e memórias chega na Fase 4.
+                    Este documento ainda não foi processado pela IA.
                   </p>
                 )}
+                <ProcessDocumentButton documentId={doc.id} status={doc.status as DocumentStatus} />
               </CardContent>
             </Card>
           </TabsContent>

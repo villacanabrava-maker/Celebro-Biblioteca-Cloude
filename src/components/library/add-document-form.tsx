@@ -102,6 +102,10 @@ export function AddDocumentForm() {
       return;
     }
 
+    // Dispara o processamento por IA em segundo plano; a página de detalhe
+    // acompanha o status sozinha (não precisa esperar aqui).
+    fetch(`/api/documents/${inserted.id}/process`, { method: "POST" }).catch(() => {});
+
     router.push(`/biblioteca/${inserted.id}`);
     router.refresh();
   }
