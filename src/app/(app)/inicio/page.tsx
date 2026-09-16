@@ -3,14 +3,8 @@ import { Brain, FilePlus2, Library, NotebookText, Search, Sparkles } from "lucid
 
 import { TopBar } from "@/components/layout/top-bar";
 import { Card, CardContent } from "@/components/ui/card";
-
-// TODO(fase 2/3): substituir pelos dados reais do usuário logado (Supabase).
-const mock = {
-  nome: "Robert",
-  biblioteca: { total: 0, livros: 0, reflexoes: 0, cartas: 0, outros: 0 },
-  cerebro: { percentual: 0, memorias: 0 },
-  reflexoes: { concluidas: 0, emElaboracao: 0, emRevisao: 0 },
-};
+import { createClient } from "@/lib/supabase/server";
+import { getInitials } from "@/lib/format";
 
 const quickActions = [
   { href: "/biblioteca/adicionar", label: "Adicionar arquivo", icon: FilePlus2 },
@@ -19,14 +13,33 @@ const quickActions = [
   { href: "/reflexoes", label: "Ver minhas reflexões", icon: NotebookText },
 ];
 
-export default function InicioPage() {
+export default async function InicioPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const [{ data: profile }, { count: totalDocs }, { count: totalLivros }, { count: totalReflexoesBiblioteca }, { data: brain }, { count: reflexoesConcluidas }, { count: reflexoesEmElaboracao }] =
+    await Promise.all([
+      supabase.from("profiles").select("full_name").eq("id", user!.id).maybeSingle(),
+      supabase.from("documents").select("*", { count: "exact", head: true }),
+      supabase.from("documents").select("*", { count: "exact", head: true }).eq("type", "livro"),
+      supabase.from("documents").select("*", { count: "exact", head: true }).eq("type", "reflexao"),
+      supabase.from("brain_insights").select("memory_analyzed_percent, memories_analyzed_count").eq("user_id", user!.id).maybeSingle(),
+      supabase.from("reflections").select("*", { count: "exact", head: true }).in("status", ["aprovada", "incorporada"]),
+      supabase.from("reflections").select("*", { count: "exact", head: true }).in("status", ["rascunho", "em_revisao"]),
+    ]);
+
+  const nome = profile?.full_name?.split(" ")[0] || user?.email?.split("@")[0] || "";
+  const initials = getInitials(profile?.full_name ?? user?.email ?? "?");
+
   return (
     <>
-      <TopBar showLogo />
+      <TopBar showLogo initials={initials} />
 
       <div className="flex flex-col gap-5 px-4 pt-5">
         <section className="rounded-xl bg-gradient-to-br from-navy to-navy-muted p-5 text-white">
-          <p className="text-xl font-semibold">Olá, {mock.nome}!</p>
+          <p className="text-xl font-semibold">Olá, {nome}!</p>
           <p className="mt-1 text-sm text-white/70">Que bom te ver por aqui.</p>
           <p className="mt-4 text-sm italic text-white/60">
             &ldquo;Toda grande reflexão começa com uma pergunta.&rdquo;
@@ -42,12 +55,10 @@ export default function InicioPage() {
                 </span>
                 <div className="flex-1">
                   <p className="text-sm font-semibold">Minha Biblioteca</p>
-                  <p className="text-xs text-muted-foreground">
-                    {mock.biblioteca.total} documentos
-                  </p>
+                  <p className="text-xs text-muted-foreground">{totalDocs ?? 0} documentos</p>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {mock.biblioteca.livros} livros · {mock.biblioteca.reflexoes} reflexões
+                  {totalLivros ?? 0} livros · {totalReflexoesBiblioteca ?? 0} reflexões
                 </p>
               </CardContent>
             </Card>
@@ -62,11 +73,11 @@ export default function InicioPage() {
                 <div className="flex-1">
                   <p className="text-sm font-semibold">Meu Cérebro</p>
                   <p className="text-xs text-muted-foreground">
-                    Memória analisada: {mock.cerebro.percentual}%
+                    Memória analisada: {brain?.memory_analyzed_percent ?? 0}%
                   </p>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {mock.cerebro.memorias} memórias
+                  {brain?.memories_analyzed_count ?? 0} memórias
                 </p>
               </CardContent>
             </Card>
@@ -81,11 +92,11 @@ export default function InicioPage() {
                 <div className="flex-1">
                   <p className="text-sm font-semibold">Minhas Reflexões</p>
                   <p className="text-xs text-muted-foreground">
-                    {mock.reflexoes.concluidas} concluídas
+                    {reflexoesConcluidas ?? 0} concluídas
                   </p>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {mock.reflexoes.emElaboracao} em elaboração
+                  {reflexoesEmElaboracao ?? 0} em elaboração
                 </p>
               </CardContent>
             </Card>

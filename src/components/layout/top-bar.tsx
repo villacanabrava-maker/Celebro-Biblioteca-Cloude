@@ -3,16 +3,28 @@ import { Search } from "lucide-react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Logo } from "@/components/layout/logo";
+import { createClient } from "@/lib/supabase/server";
+import { getInitials } from "@/lib/format";
 
-export function TopBar({
+export async function TopBar({
   title,
   showLogo = false,
-  initials = "RB",
+  initials,
 }: {
   title?: string;
   showLogo?: boolean;
   initials?: string;
 }) {
+  let resolvedInitials = initials;
+
+  if (!resolvedInitials) {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    resolvedInitials = getInitials(user?.email ?? "?");
+  }
+
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between gap-3 bg-navy px-4 py-3.5">
       {showLogo ? <Logo /> : <h1 className="text-lg font-semibold text-white">{title}</h1>}
@@ -27,7 +39,7 @@ export function TopBar({
         <Link href="/configuracoes" aria-label="Configurações">
           <Avatar className="size-9 ring-1 ring-white/15">
             <AvatarFallback className="bg-primary text-primary-foreground">
-              {initials}
+              {resolvedInitials}
             </AvatarFallback>
           </Avatar>
         </Link>

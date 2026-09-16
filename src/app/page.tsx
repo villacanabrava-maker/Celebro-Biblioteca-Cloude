@@ -1,6 +1,12 @@
 import { redirect } from "next/navigation";
 
-export default function RootPage() {
-  // TODO(fase 2): redirecionar para /inicio quando já houver sessão válida.
-  redirect("/login");
+import { createClient } from "@/lib/supabase/server";
+
+export default async function RootPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  redirect(user ? "/inicio" : "/login");
 }
