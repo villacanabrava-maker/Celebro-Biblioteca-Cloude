@@ -49,22 +49,37 @@ desenvolvimento novo acontece no Cérebro Autoral (schemas novos, abaixo).
   espaço por usuário). Zero avisos de segurança. Upload/hash/dedupe de verdade
   fica para a Fase 3, junto com o pipeline — é quando upload passa a fazer
   sentido de verdade (dispara processamento).
-- [x] **Fase 3+4 — Processamento: fundação de dados** (Pipeline + Documento Processado)
+- [x] **Fase 3+4 — Processamento: pipeline de verdade rodando** (Pipeline + Documento Processado)
   As 10 tabelas do schema `processamento` (`execucoes`, `etapas_execucao`,
   `documentos_processados`, `secoes`, `fragmentos`, `sinteses`, `elementos`,
   `evidencias`, `vetores`, `relacoes_elementos`) — completas, com RLS, vocabulário
   controlado, FK composta (tabela+usuário) na cadeia inteira para nunca vazar dado
   entre usuários, busca textual em português (gerada automaticamente em
-  `fragmentos.vetor_textual`) e índice HNSW para embeddings (1536 dimensões). Zero
-  avisos de segurança; 33 índices de performance corrigidos.
-  **Pesquisa e decisão importante:** avaliei o Vercel Workflows para orquestrar as 18
-  etapas de forma durável — descartado por trazer 16 vulnerabilidades (14 "high") sem
-  correção limpa, claramente ainda em beta. Optamos por uma Vercel Function de até 30
-  minutos (plano Pro) + `etapas_execucao` como livro de bordo para retry/resume feito
-  por nós. Detalhes completos em `docs/DECISOES.md`.
-  **O que falta:** o código de verdade do `processar_obra()` (as 18 etapas em si) e o
-  fluxo de upload que preenche `biblioteca.obras`/`versoes_obras` — é a próxima
-  entrega concreta, ainda sem tela nem rota no app.
+  `fragmentos.vetor_textual`) e índice HNSW para embeddings (1536 dimensões).
+  **Portão de acesso:** como os schemas novos não são expostos via Data API, criei 19
+  funções `SECURITY DEFINER` e 13 views em `public` (`autoral_*`/`v_autoral_*`) como
+  único caminho de escrita/leitura — detalhes e a correção de segurança feita em
+  seguida (views rodando com dono em vez de com quem consulta) em `docs/DECISOES.md`.
+  **Pipeline (`src/lib/autoral/pipeline.ts`):** as 16 primeiras etapas de
+  `processar_obra()` rodando de verdade — extração real de PDF/DOCX/TXT/MD,
+  normalização, identificação heurística de estrutura (parte/capítulo/seção),
+  fragmentação, sínteses por IA em cada nível, extração de elementos por fragmento
+  com evidência, normalização na taxonomia (busca ou cria conceito), relações entre
+  elementos, embeddings (1536d), leitura local de metodologia (só desta obra — o
+  Cérebro consolidado é Fase 7) e publicação (`candidato` → `ativo`). Etapas 17/18
+  (avaliar participação no Cérebro / atualizar o Cérebro) ficam de fora — dependem do
+  schema `cerebro_autoral`, Fase 7. Roda dentro de `after()` numa Vercel Function de
+  até 30 min (Pro), sem travar a resposta do upload; simplificações conscientes
+  (resume por item nas etapas caras, exceto embeddings) documentadas em
+  `docs/DECISOES.md`.
+  **Tela:** upload real em `/autoral/nova` (hash + checagem de duplicidade no
+  navegador, envio direto para o Storage) e acompanhamento ao vivo em
+  `/autoral/[obraId]` (progresso da execução, depois resumo/elementos da obra
+  processada). Entrada pelo banner "Novo: Cérebro Autoral (beta)" em `/cerebro` — a
+  Biblioteca (`/biblioteca`, schema `public`) continua intocada.
+  Zero avisos de segurança de verdade (`get_advisors` limpo, fora dos dois avisos
+  aceitos conscientemente — ver `docs/DECISOES.md`); 33 índices de performance
+  corrigidos na fundação de dados.
 - [ ] **Fase 5 — Taxonomia inteligente**
   Motor taxonômico completo (buscar antes de propor conceito novo), UI de revisão de
   conceitos.

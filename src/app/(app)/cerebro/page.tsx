@@ -1,4 +1,5 @@
-import { Brain } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Brain, Sparkles } from "lucide-react";
 
 import { TopBar } from "@/components/layout/top-bar";
 import { Badge, tagVariantForLabel } from "@/components/ui/badge";
@@ -29,6 +30,9 @@ export default async function CerebroPage() {
     return (
       <>
         <TopBar title="Meu Cérebro" />
+        <div className="px-4 pt-4">
+          <BannerCerebroAutoral />
+        </div>
         <div className="flex flex-1 flex-col items-center justify-center gap-3 px-8 py-16 text-center">
           <span className="flex size-16 items-center justify-center rounded-3xl bg-[image:var(--gradient-ai)] text-white shadow-[var(--shadow-glow-ai)]">
             <Brain className="size-7" />
@@ -65,6 +69,8 @@ export default async function CerebroPage() {
       <TopBar title="Meu Cérebro" />
 
       <div className="flex flex-col gap-5 px-4 pt-5 pb-8">
+        <BannerCerebroAutoral />
+
         <Card>
           <CardContent className="flex flex-col gap-3 p-4">
             <div className="flex items-center gap-3">
@@ -157,6 +163,26 @@ function TagSection({ title, tags, large = false }: { title: string; tags: strin
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+function BannerCerebroAutoral() {
+  return (
+    <Link href="/autoral">
+      <Card className="border-none bg-[image:var(--gradient-ai)] shadow-[var(--shadow-glow-ai)] transition-transform duration-200 hover:-translate-y-0.5">
+        <CardContent className="flex items-center gap-3 p-4">
+          <Sparkles className="size-5 shrink-0 text-white" />
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-white">Novo: Cérebro Autoral (beta)</p>
+            <p className="text-xs text-white/85">
+              Envie um livro ou texto e veja a IA de verdade estruturando, resumindo e identificando
+              elementos — o início da metodologia consolidada.
+            </p>
+          </div>
+          <ArrowRight className="size-4 shrink-0 text-white/80" />
+        </CardContent>
+      </Card>
+    </Link>
   );
 }
 

@@ -5,6 +5,115 @@ decisão, motivo, consequências. Formato pedido em `docs/VISAO_PRODUTO.md` §44
 
 ---
 
+## 2026-09-17 — Fase 3+4 (código): "portão" de funções/views em `public`
+
+**Problema.** A decisão de 2026-09-16 (ver entrada mais abaixo) manteve os schemas
+`biblioteca`/`processamento`/`taxonomia`/`sistema` fora da lista de "Exposed schemas" do
+Data API do Supabase, para não depender de um passo manual no painel. Chegada a hora de
+escrever o código de verdade do `processar_obra()` e do upload, era preciso decidir como o
+app alcança essas tabelas a partir do navegador/servidor sem exposição direta.
+
+**Investiguei** se dava para mudar `pgrst.db_schemas` só por SQL (rodei
+`select rolconfig from pg_roles where rolname='authenticator'` e não achei nada lá — no
+Supabase hospedado isso é config de plataforma, não GUC de role acessível por SQL comum).
+Sem essa rota, as opções eram: (1) pedir para o usuário mexer no painel, (2) rotear tudo por
+`public`, como o Dicionário Mestre já previa (schema `aplicacao`: "views e funções seguras
+destinadas à interface").
+
+**Decisão.** Construí em `public` (única coisa exposta hoje, já usada pelo v1):
+- **19 funções `SECURITY DEFINER`** (`autoral_*`) — o único caminho de escrita. Nenhuma
+  confia em `usuario_id` vindo do cliente: todas usam `auth.uid()` internamente, com
+  `search_path = ''` e nomes de tabela sempre qualificados por schema (proteção padrão
+  contra sequestro de `search_path` em função `SECURITY DEFINER`). Toda referência a uma
+  linha "pai" que não tem FK composta (tabela+usuário) garantida pelo banco — por exemplo
+  `secao_pai_id`, `secao_id` de um fragmento, o alvo de um vetor — é conferida manualmente
+  dentro da função antes do INSERT.
+- **13 views `v_autoral_*`** — o único caminho de leitura, uma por tabela de domínio que a
+  interface precisa consultar (obras, versões, execuções, etapas, documentos processados,
+  seções, fragmentos, sínteses, elementos, evidências, relações, classificações e o
+  vocabulário global de conceitos da taxonomia).
+
+**Erro cometido e corrigido na hora (`get_advisors` depois de aplicar):**
+1. Views criadas sem `security_invoker` rodam com o dono (`postgres`), que ignora RLS —
+   ficam com o filtro `usuario_id = auth.uid()` escrito à mão dentro da view. Funciona, mas
+   o linter do Supabase marca como **ERRO** ("Security Definer View"), porque é um padrão
+   fácil de usar errado. Troquei pela alternativa recomendada: `GRANT SELECT` direto nas
+   tabelas de domínio para `authenticated` + `ALTER VIEW ... SET (security_invoker = true)`
+   — agora a view roda como quem está de fato logado, e quem decide quais linhas aparecem
+   voltou a ser só a RLS "dono gerencia..." que já existia desde a Fase 1/2/3 (schemas
+   continuam fora do Data API — só a view em `public` os alcança).
+2. `revoke all on function ... from public` não bastou: o Supabase concede EXECUTE por
+   padrão a `anon` e `authenticated` **individualmente** na criação (privilégio padrão do
+   schema, não só via o pseudo-papel PUBLIC). Corrigido revogando de `anon` explicitamente
+   e mantendo só `authenticated`. Depois da correção, `get_advisors` (security) ficou limpo
+   a não ser por dois avisos aceitos conscientemente: `auth_leaked_password_protection`
+   (pré-existente, fora de escopo) e "signed-in users can execute" nas 19 funções — que é
+   exatamente a intenção (usuário autenticado é quem deve poder chamá-las).
+
+**Consequência prática.** Todo acesso do app às tabelas do Cérebro Autoral passa por esse
+portão. Um novo tipo de dado (Fase 5 em diante) precisa de uma nova função/view aqui — não
+dá para simplesmente fazer `supabase.from('cerebro_autoral.algo')` do jeito que o v1 faz com
+`public`.
+
+---
+
+## 2026-09-17 — Onde a tela de upload/processamento aparece no app
+
+**Problema.** A Biblioteca (`/biblioteca`) já existe e funciona, ligada ao schema `public`
+(v1). O Cérebro Autoral precisa de uma tela de upload própria (liga a
+`biblioteca.obras`/`versoes_obras`, dispara o pipeline) — mas colocar isso dentro de
+`/biblioteca` misturaria os dois sistemas de dados, e substituir `/biblioteca` de uma vez
+trocaria a tela que o usuário já usa por uma ainda incompleta (só a Fase 3+4 está pronta;
+Fases 5–12 do Cérebro Autoral ainda faltam).
+
+**Perguntei ao usuário** (pergunta estruturada, três opções: aba nova avisada, substituir a
+Biblioteca atual, ou construir só nos bastidores). **Resposta:** aba nova, avisada na tela
+"Meu Cérebro".
+
+**Decisão.** Rotas novas em `/autoral`, `/autoral/nova` e `/autoral/[obraId]`, dentro do
+mesmo grupo de rotas `(app)` (aproveita o layout/top-bar/bottom-nav existentes), mas **sem**
+entrada na bottom nav — o link de entrada é um banner ("Novo: Cérebro Autoral (beta)") na
+tela `/cerebro`. `/biblioteca` continua 100% intocada. Quando o Cérebro Autoral tiver
+superfície suficiente para substituir o v1 de verdade, isso vira uma decisão própria
+("virada de chave"), não algo implícito nesta fase.
+
+---
+
+## 2026-09-17 — Simplificações conscientes desta entrega (Fase 3+4: código)
+
+Para manter a entrega em um tamanho responsável, assumi alguns cortes deliberados,
+documentados aqui para não serem confundidos com bugs:
+
+- **Upload sempre cria obra nova** (nunca "nova versão de uma obra existente"). A
+  duplicidade por hash já impede reenviar o mesmo arquivo duas vezes; "nova versão" de uma
+  obra já cadastrada fica para quando a tela de edição de obras existir.
+- **Identificação de estrutura é heurística**, não usa IA: reconhece markdown (`#`/`##`),
+  "Parte N", "Capítulo N", "Seção N" e linhas curtas em CAIXA ALTA isoladas por linhas em
+  branco, e monta no máximo 3 níveis (parte → capítulo → seção). Sem nenhum título
+  detectado, a obra inteira vira uma única seção — nunca falha por falta de estrutura. Uma
+  identificação de estrutura mais sofisticada (por IA) é candidata natural para a Fase 5/6.
+- **Página de cada fragmento não é exata para PDF**: cada fragmento herda a página
+  inicial/final da seção inteira a que pertence, não a página exata do parágrafo — suficiente
+  para "ver a evidência na vizinhança certa", mas não para citar a página exata.
+- **Elementos são extraídos por fragmento**, não deduplicados entre fragmentos (o mesmo tema
+  citado em três parágrafos vira três `elementos`, ligados por `relacoes_elementos` quando a
+  IA identifica conexão). Deduplicação/fusão de elementos é trabalho do motor taxonômico
+  completo (Fase 5).
+- **Resumo por retomada (resume) é por item nas etapas caras** (seções, fragmentos,
+  sínteses, elementos+evidências, taxonomia, relações) — cada etapa confere o que já existe
+  no banco antes de chamar a IA de novo — **exceto embeddings**, que não têm um jeito barato
+  de conferir duplicidade (não há índice único por alvo em `processamento.vetores`); se essa
+  etapa específica falhar no meio e for repetida, pode gerar embeddings duplicados para quem
+  já tinha — custo de IA repetido, nunca dado incorreto.
+- **Token de sessão em processamento muito longo**: o pipeline roda dentro de `after()` na
+  mesma requisição do upload, usando a sessão do usuário (cookies). Para uma obra muito
+  grande, se o processamento passar da validade do token de acesso (~1h), a etapa em
+  andamento falha e fica registrada em `processamento.execucoes`/`etapas_execucao` — sem
+  corromper nada —, mas ainda não existe um botão "tentar de novo" na interface (fica para
+  quando o volume de uso justificar).
+
+---
+
 ## 2026-09-16 — Pivô para o "Cérebro Autoral": onde ele nasce
 
 **Problema.** O usuário compartilhou 4 documentos (Dicionário Mestre de Dados e Taxonomia,
